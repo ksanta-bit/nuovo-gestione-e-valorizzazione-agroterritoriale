@@ -32,10 +32,10 @@
     button { font: inherit; }
 
     .page {
-      width: min(1260px, calc(100% - 32px));
+      width: min(1800px, calc(100% - clamp(28px, 4vw, 72px)));
       margin: 0 auto;
       padding: 26px 0 64px;
-      font-size: clamp(16px, 1.15vw, 18px);
+      font-size: 19px;
     }
 
     .site-nav { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 24px; }
@@ -122,7 +122,7 @@
 
     .map-grid {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 500px), 1fr));
       gap: 16px;
       align-items: start;
     }
@@ -299,7 +299,9 @@
       text-align: right;
     }
 
-    @media (max-width: 760px) {
+     @media (max-width: 1100px) { .page { font-size: 17px; } .map-grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); } }
+
+     @media (max-width: 760px) { .page { font-size: 16px; }
       .page { width: min(100% - 20px, 680px); padding-top: 20px; }
       .topbar { align-items: stretch; flex-direction: column; }
       .toolbar { justify-content: flex-start; }
