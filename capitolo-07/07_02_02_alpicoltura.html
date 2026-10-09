@@ -1,0 +1,838 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mappa interattiva - Alpicoltura</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: light-dark(#f7f8fa, #12161b);
+      --surface: light-dark(#ffffff, #1b222a);
+      --surface-soft: light-dark(#f0f3f6, #222b35);
+      --text: light-dark(#1c2732, #edf2f7);
+      --muted: light-dark(#607080, #a9b6c3);
+      --line: light-dark(#d4dce4, #3a4652);
+      --root: light-dark(#1f3c4d, #d7e8f2);
+      --root-text: light-dark(#ffffff, #14242f);
+      --shadow: 0 10px 28px light-dark(rgba(29, 46, 61, .10), rgba(0, 0, 0, .28));
+      --radius: 8px;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      letter-spacing: 0;
+    }
+
+    button { font: inherit; }
+
+    .page {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 32px 0 56px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+
+    .heading h1 {
+      margin: 0;
+      font-size: clamp(1.45rem, 3vw, 2.15rem);
+      line-height: 1.12;
+      font-weight: 700;
+    }
+
+    .heading p {
+      margin: 7px 0 0;
+      color: var(--muted);
+      font-size: .95rem;
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .toolbar button {
+      min-height: 40px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 8px 12px;
+      background: var(--surface);
+      color: var(--text);
+      font-weight: 650;
+      cursor: pointer;
+    }
+
+    .toolbar button:hover { background: var(--surface-soft); }
+    .toolbar button:focus-visible { outline: 3px solid light-dark(#7aa7c2, #8fc0dc); outline-offset: 2px; }
+
+    .root-node {
+      position: relative;
+      max-width: 760px;
+      margin: 0 auto 42px;
+      padding: 21px 26px;
+      border-radius: var(--radius);
+      background: var(--root);
+      color: var(--root-text);
+      text-align: center;
+      box-shadow: var(--shadow);
+    }
+
+    .root-node strong {
+      display: block;
+      font-size: clamp(1.15rem, 2.5vw, 1.55rem);
+      line-height: 1.25;
+    }
+
+    .root-node span {
+      display: block;
+      margin-top: 7px;
+      font-size: .93rem;
+      line-height: 1.45;
+      opacity: .9;
+    }
+
+    .root-node::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: -42px;
+      width: 2px;
+      height: 42px;
+      background: var(--line);
+    }
+
+    .map-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      align-items: start;
+    }
+
+    .branch {
+      --branch: #4b7792;
+      --branch-soft: color-mix(in srgb, var(--branch) 14%, var(--surface));
+      position: relative;
+      border: 1px solid var(--line);
+      border-top: 5px solid var(--branch);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .branch[data-tone="red"] { --branch: #b24a4a; }
+    .branch[data-tone="green"] { --branch: #3d7f56; }
+    .branch[data-tone="blue"] { --branch: #356f9d; }
+    .branch[data-tone="amber"] { --branch: #a86f19; }
+    .branch[data-tone="violet"] { --branch: #7058a6; }
+    .branch[data-tone="teal"] { --branch: #2f7b79; }
+
+    .branch-toggle,
+    .concept-toggle {
+      width: 100%;
+      border: 0;
+      color: var(--text);
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .branch-toggle {
+      display: grid;
+      grid-template-columns: 34px minmax(0, 1fr) 28px;
+      align-items: center;
+      gap: 10px;
+      min-height: 66px;
+      padding: 12px 14px;
+      background: var(--branch-soft);
+    }
+
+    .branch-toggle:hover,
+    .concept-toggle:hover { filter: brightness(.98); }
+
+    .branch-toggle:focus-visible,
+    .concept-toggle:focus-visible {
+      outline: 3px solid var(--branch);
+      outline-offset: -3px;
+    }
+
+    .number {
+      display: grid;
+      place-items: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--branch);
+      color: #fff;
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .branch-title {
+      min-width: 0;
+      font-size: 1.02rem;
+      font-weight: 750;
+      line-height: 1.25;
+    }
+
+    .symbol {
+      display: grid;
+      place-items: center;
+      width: 28px;
+      height: 28px;
+      color: var(--branch);
+      font-size: 1.35rem;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    [aria-expanded="true"] .symbol { transform: rotate(45deg); }
+
+    .branch-content {
+      padding: 14px 16px 18px 25px;
+    }
+
+    .branch-content[hidden],
+    .node-children[hidden] { display: none; }
+
+    .tree-node {
+      position: relative;
+      margin: 0 0 10px 17px;
+    }
+
+    .tree-node:last-child { margin-bottom: 0; }
+
+    .tree-node::before {
+      content: "";
+      position: absolute;
+      left: -17px;
+      top: 20px;
+      width: 14px;
+      height: 2px;
+      background: color-mix(in srgb, var(--branch) 55%, var(--line));
+    }
+
+    .tree-node::after {
+      content: "";
+      position: absolute;
+      left: -17px;
+      top: -11px;
+      bottom: -12px;
+      width: 2px;
+      background: color-mix(in srgb, var(--branch) 55%, var(--line));
+    }
+
+    .tree-node:last-child::after { bottom: calc(100% - 21px); }
+
+    .concept-toggle {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 26px;
+      align-items: center;
+      gap: 8px;
+      min-height: 42px;
+      padding: 8px 10px 8px 12px;
+      border-radius: 6px;
+      background: var(--surface-soft);
+      font-weight: 700;
+      line-height: 1.3;
+    }
+
+    .concept-toggle .symbol {
+      width: 24px;
+      height: 24px;
+      font-size: 1.1rem;
+    }
+
+    .leaf {
+      position: relative;
+      min-height: 52px;
+      padding: 10px 12px 10px 17px;
+      border-left: 4px solid color-mix(in srgb, var(--branch) 70%, transparent);
+      background: color-mix(in srgb, var(--branch) 7%, var(--surface));
+      border-radius: 0 6px 6px 0;
+      line-height: 1.35;
+    }
+
+    .leaf strong {
+      display: block;
+      font-size: .94rem;
+      font-weight: 720;
+    }
+
+    .leaf span {
+      display: block;
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: .9rem;
+      line-height: 1.45;
+    }
+
+    .node-children {
+      margin: 8px 0 0 13px;
+      padding-left: 9px;
+      border-left: 2px solid color-mix(in srgb, var(--branch) 30%, var(--line));
+    }
+
+    .status {
+      min-height: 20px;
+      margin: 16px 2px 0;
+      color: var(--muted);
+      font-size: .85rem;
+      text-align: right;
+    }
+
+    @media (max-width: 760px) {
+      .page { width: min(100% - 20px, 680px); padding-top: 20px; }
+      .topbar { align-items: stretch; flex-direction: column; }
+      .toolbar { justify-content: flex-start; }
+      .toolbar button { flex: 1 1 auto; }
+      .map-grid { grid-template-columns: 1fr; }
+      .root-node { margin-bottom: 32px; }
+      .root-node::after { height: 32px; bottom: -32px; }
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+      .symbol { transition: transform 160ms ease; }
+      .branch, .leaf, .concept-toggle { transition: background-color 160ms ease, border-color 160ms ease; }
+    }
+
+    @media print {
+      :root { color-scheme: light; }
+      body { background: #fff; }
+      .page { width: 100%; padding: 0; }
+      .toolbar, .status { display: none; }
+      .branch { break-inside: avoid; box-shadow: none; }
+      .map-grid { gap: 10px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="topbar">
+      <div class="heading">
+        <h1>Alpicoltura</h1>
+        <p>Agricoltura montana, transumanza e gestione delle foraggere</p>
+      </div>
+      <div class="toolbar" aria-label="Controlli della mappa">
+        <button type="button" id="open-all">+ Apri tutto</button>
+        <button type="button" id="close-all">− Chiudi tutto</button>
+        <button type="button" id="print-map">Stampa</button>
+      </div>
+    </header>
+
+    <section class="root-node" aria-label="Concetto centrale">
+      <strong>Alpicoltura</strong>
+      <span>Gestione di allevamenti, pascoli e foraggere nelle aree montane</span>
+    </section>
+
+    <section id="map" class="map-grid" aria-label="Mappa concettuale espandibile"></section>
+    <div id="status" class="status" aria-live="polite"></div>
+  </main>
+
+  <script>
+    /* Mappa precedente conservata nella copia sorgente.
+    const branches = [
+      {
+        id: "criticita",
+        title: "Criticità delle aree montane",
+        tone: "red",
+        children: [
+          {
+            id: "marginalita",
+            title: "Marginalità",
+            children: [
+              { title: "Economico-produttiva", note: "Le aziende affrontano costi più alti per trasporti, macchinari e servizi; inoltre i mercati sono spesso piccoli e lontani." },
+              { title: "Isolamento commerciale", note: "Strade difficili, distanza dai centri abitati e collegamenti deboli rendono più oneroso vendere prodotti, acquistare materiali e raggiungere i servizi." },
+              { title: "Sociale e culturale", note: "Quando scuole, sanità, attività culturali e occasioni di incontro diminuiscono, le comunità rischiano di spopolarsi e di perdere competenze locali." }
+            ]
+          },
+          {
+            id: "abbandono",
+            title: "Abbandono della montagna",
+            children: [
+              { title: "Esodo dei giovani", note: "La ricerca di studio, lavoro e servizi in pianura riduce la popolazione residente e aumenta l'età media di chi resta." },
+              { title: "Riduzione delle attività agroforestali", note: "Se si abbandonano campi, pascoli e boschi, manca la manutenzione ordinaria che limita degrado, incendi e instabilità del suolo." },
+              { title: "Modelli poco sostenibili", note: "Interventi pensati senza rispettare i limiti del territorio possono consumare suolo, danneggiare paesaggio e risorse naturali." },
+              { title: "Politiche poco efficaci", note: "Aiuti troppo generici o frammentati non risolvono i problemi se non tengono conto delle caratteristiche di ogni zona montana." }
+            ]
+          },
+          { title: "Conseguenza territoriale", note: "L'abbandono riduce la cura di versanti, fossi, prati e boschi: aumentano quindi erosione, frane, alluvioni e perdita del paesaggio rurale." }
+        ]
+      },
+      {
+        id: "multifunzionalita",
+        title: "Multifunzionalità della montagna",
+        tone: "green",
+        children: [
+          { title: "Biodiversità", note: "La varietà di quote, esposizioni e ambienti crea molti habitat; conservarli significa proteggere specie vegetali e animali diverse." },
+          { title: "Tutela ambientale", note: "Boschi, prati e pascoli stabilizzano i versanti, trattengono il suolo e regolano il deflusso dell'acqua, riducendo il rischio idrogeologico." },
+          { title: "Prodotti tipici", note: "Formaggi di malga, carni, miele e altri prodotti legati al luogo rafforzano l'identità locale e possono creare valore economico." },
+          { title: "Riserve idriche", note: "Le montagne raccolgono e rilasciano acqua verso valle; la loro gestione influenza disponibilità idrica, irrigazione e qualità delle acque." },
+          { title: "Risorse forestali", note: "I boschi forniscono legname e biomassa, ma offrono anche protezione del suolo, assorbimento di carbonio e spazi ricreativi." },
+          { title: "Tradizioni e cultura", note: "Tecniche agricole, feste, architetture rurali e saperi locali sono un patrimonio che rende riconoscibili le comunità montane." }
+        ]
+      },
+      {
+        id: "sviluppo",
+        title: "Sviluppo sostenibile",
+        tone: "blue",
+        children: [
+          {
+            id: "obiettivi",
+            title: "Obiettivi principali",
+            children: [
+              { title: "Qualità della vita", note: "Servono servizi essenziali, lavoro, collegamenti e occasioni per i giovani: solo così vivere in montagna resta una scelta possibile." },
+              { title: "Funzione ecologica", note: "Lo sviluppo deve rispettare la capacità degli ecosistemi di rigenerarsi, evitando attività che danneggiano acqua, suolo, boschi e biodiversità." }
+            ]
+          },
+          {
+            id: "attivita",
+            title: "Attività fondamentali",
+            children: [
+              { title: "Agricoltura", note: "Coltivazioni adatte a clima e pendenza producono reddito e mantengono aperto il paesaggio, senza forzare l'ambiente." },
+              { title: "Allevamento estensivo", note: "Gli animali utilizzano prati e pascoli: se il carico è equilibrato, limitano l'avanzata del bosco e valorizzano le foraggere locali." },
+              { title: "Attività forestale", note: "Tagli e cure pianificati mantengono il bosco stabile e produttivo, fornendo legno senza compromettere la funzione protettiva." }
+            ]
+          },
+          { title: "Doppio risultato", note: "Le attività montane devono dare reddito a chi vive sul posto e, nello stesso tempo, offrire un beneficio collettivo: paesaggio curato, meno rischi e risorse conservate." }
+        ]
+      },
+      {
+        id: "legislazione",
+        title: "Legislazione e istituzioni",
+        tone: "amber",
+        children: [
+          { title: "Costituzione, articolo 44", note: "La salvaguardia e la valorizzazione delle zone montane sono considerate di interesse nazionale: non riguardano solo chi vive in montagna." },
+          { title: "Unione Europea", note: "La direttiva 75/268/CEE individua le aree montane e svantaggiate, riconoscendo che l'agricoltura qui opera con maggiori difficoltà." },
+          { title: "Stato italiano", note: "La Legge n. 97/1994 organizza interventi specifici per la montagna e riconosce il ruolo delle comunità che vi risiedono." },
+          { title: "Regioni ed enti locali", note: "Le decisioni diventano concrete tramite leggi, piani e progetti regionali e locali, adattati alle esigenze di ogni territorio." },
+          { title: "Responsabilità condivisa", note: "Per funzionare, le politiche devono coordinare Unione Europea, Stato, Regioni, Province autonome, Comuni e soggetti del territorio." }
+        ]
+      },
+      {
+        id: "ue",
+        title: "Politiche e fondi europei",
+        tone: "violet",
+        children: [
+          {
+            id: "pac",
+            title: "PAC",
+            children: [
+              { title: "Indennità compensative", note: "Sono aiuti agli agricoltori che lavorano in aree difficili: compensano in parte maggiori costi e minori rese rispetto alle zone più favorevoli." },
+              { title: "Paesaggio", note: "La PAC condiziona quali colture e tecniche convengono agli agricoltori; può quindi favorire una gestione più attenta di suolo, acqua e paesaggio." }
+            ]
+          },
+          {
+            id: "coesione",
+            title: "Politica di coesione",
+            children: [
+              { title: "Convergenza", note: "Finanzia la crescita delle regioni meno sviluppate per ridurre le differenze economiche e sociali tra territori europei." },
+              { title: "Competitività e occupazione", note: "Sostiene innovazione, imprese, competenze e posti di lavoro, rendendo le economie locali più capaci di affrontare i cambiamenti." },
+              { title: "Cooperazione territoriale", note: "Favorisce progetti comuni tra territori, anche oltre i confini nazionali, quando i problemi e le risorse sono condivisi." }
+            ]
+          },
+          {
+            id: "fondi",
+            title: "Fondi strutturali",
+            children: [
+              { title: "FESR", note: "Finanzia infrastrutture e sviluppo locale, ma anche ricerca, innovazione, tutela dell'ambiente e prevenzione dei rischi naturali." },
+              { title: "FSE", note: "Finanzia formazione e inclusione: aiuta lavoratori e imprese ad adattarsi, facilita l'accesso al lavoro e sostiene le persone più svantaggiate." },
+              { title: "Gestione indiretta", note: "La Commissione fissa regole comuni; gli Stati le traducono nei QSN e le Regioni nei POR, poi selezionano e controllano i progetti finanziati." }
+            ]
+          },
+          {
+            id: "life",
+            title: "Politica ambientale e LIFE+",
+            children: [
+              { title: "Natura e biodiversità", note: "Sostiene interventi per conservare habitat e specie e per definire misure concrete che evitino la perdita di biodiversità." },
+              { title: "Politica ambientale e governance", note: "Finanzia innovazioni di processo su aria, acqua, suolo, risorse naturali e cambiamento climatico, utili anche come modello per altri territori." },
+              { title: "Informazione e comunicazione", note: "Promuove la conoscenza delle norme ambientali e comportamenti preventivi, per esempio iniziative di sensibilizzazione contro gli incendi." },
+              { title: "Gestione diretta", note: "A differenza dei fondi strutturali, LIFE+ è gestito dalla Commissione europea, che seleziona e controlla direttamente i progetti." }
+            ]
+          }
+        ]
+      },
+      {
+        id: "regioni",
+        title: "Governance regionale",
+        tone: "teal",
+        children: [
+          {
+            id: "principi-regioni",
+            title: "Principi comuni",
+            children: [
+              { title: "Approccio integrato", note: "Un problema montano raramente dipende da un solo settore: politiche su ambiente, agricoltura, trasporti, sanità, imprese e turismo devono lavorare insieme." },
+              { title: "Montagna come opportunità", note: "Le caratteristiche locali, come paesaggio, prodotti, foreste, acqua e cultura, diventano risorse su cui costruire sviluppo e occupazione." },
+              { title: "Sistema montagna", note: "Non esiste una sola montagna: ogni area ha quote, economie, popolazione e difficoltà diverse, quindi richiede soluzioni mirate." }
+            ]
+          },
+          {
+            id: "esempi-regioni",
+            title: "Esempi regionali",
+            children: [
+              { title: "Piemonte", note: "Ha adottato un Testo Unico sulla montagna e una banca dati per analizzare territori montani e collinari, poi aggiornata con norme di tutela e sviluppo." },
+              { title: "Lombardia", note: "Il Piano d'Azione per la Montagna collega qualità della vita, sviluppo economico, innovazione e accessibilità a interventi su ambiente, turismo e imprese." },
+              { title: "Veneto", note: "Con il Progetto montagna e le Intese Programmatiche d'Area mette insieme enti locali, soggetti economici e sociali per decidere priorità di sviluppo." },
+              { title: "Provincia di Trento", note: "Ha creato un fondo provinciale per sostenere nel tempo le politiche montane, con attenzione a risorse ambientali, sviluppo sociale e identità culturale." },
+              { title: "Emilia-Romagna", note: "Il Programma Regionale per la Montagna usa intese provinciali e accordi-quadro per scegliere interventi coerenti con i bisogni di ogni area." },
+              { title: "Toscana", note: "La Carta delle montagne toscane punta su servizi, sostenibilità, risorse locali, protezione degli ecosistemi e capacità progettuale delle comunità montane." },
+              { title: "Calabria", note: "La normativa sul patrimonio forestale riorganizza competenze e mira a tutela del territorio, attività produttive, sicurezza e migliori condizioni di vita." }
+            ]
+          }
+        ]
+      }
+    ];
+
+    const elaborations = {
+      "Economico-produttiva": "In pratica, produrre e vendere la stessa merce costa di più rispetto alla pianura, perciò molte imprese faticano a restare competitive.",
+      "Isolamento commerciale": "Il problema non riguarda solo le merci: rende più difficile anche raggiungere scuole, ospedali, uffici e occasioni di lavoro.",
+      "Sociale e culturale": "Se le persone si allontanano, si indeboliscono anche reti di aiuto, associazioni e saperi tramandati tra generazioni.",
+      "Esodo dei giovani": "Questo crea un circolo negativo: meno giovani significa meno famiglie, meno servizi e minori motivi per restare o tornare.",
+      "Riduzione delle attività agroforestali": "La cura agricola e forestale non è soltanto produzione: è anche manutenzione preventiva del paesaggio e del territorio.",
+      "Modelli poco sostenibili": "Per esempio, un turismo non regolato o costruzioni fuori scala possono danneggiare proprio le risorse che rendono attrattiva la montagna.",
+      "Politiche poco efficaci": "Occorrono quindi interventi continuativi e coordinati, non aiuti occasionali scollegati dai bisogni reali del luogo.",
+      "Conseguenza territoriale": "La tutela della montagna interessa anche le aree di valle, perché molti effetti del dissesto si propagano lungo i corsi d'acqua.",
+      "Biodiversità": "Una maggiore biodiversità rende gli ecosistemi più equilibrati e più capaci di reagire a parassiti, eventi estremi e cambiamenti climatici.",
+      "Tutela ambientale": "Per questo pratiche agricole e forestali corrette non sono un ostacolo allo sviluppo, ma una condizione per renderlo duraturo.",
+      "Prodotti tipici": "Quando qualità e origine sono riconoscibili, il prodotto può essere venduto meglio e sostenere agricoltori, allevatori e trasformatori locali.",
+      "Riserve idriche": "Proteggere sorgenti, boschi e suoli montani è quindi importante anche per chi usa l'acqua a valle, nelle città e nelle campagne.",
+      "Risorse forestali": "La gestione deve essere pianificata: prelevare legno senza curare il bosco riduce nel tempo sia il valore economico sia la protezione ambientale.",
+      "Tradizioni e cultura": "Valorizzarle può favorire turismo responsabile, artigianato e prodotti locali, senza trasformare la cultura in qualcosa di artificiale.",
+      "Qualità della vita": "L'obiettivo è evitare che la montagna diventi un luogo da visitare soltanto, ma resti un territorio in cui si può abitare stabilmente.",
+      "Funzione ecologica": "Ogni progetto dovrebbe quindi valutare non solo il guadagno immediato, ma anche le conseguenze sull'ambiente nel medio e lungo periodo.",
+      "Agricoltura": "In montagna l'agricoltura è spesso meno intensiva, ma può puntare su qualità, filiere corte e produzioni caratterizzate dal territorio.",
+      "Allevamento estensivo": "Pascoli utilizzati con equilibrio evitano l'abbandono, limitano l'accumulo di vegetazione secca e sostengono molte specie vegetali e animali.",
+      "Attività forestale": "Una selvicoltura ben condotta sceglie tempi e modalità di taglio che consentono al bosco di rinnovarsi e di continuare a proteggere il versante.",
+      "Doppio risultato": "È il significato della multifunzionalità: chi lavora in montagna produce beni economici e, insieme, servizi utili a tutta la collettività.",
+      "Costituzione, articolo 44": "Questo principio giustifica interventi specifici, perché l'uguaglianza non significa trattare allo stesso modo territori con difficoltà molto diverse.",
+      "Unione Europea": "La classificazione delle aree svantaggiate permette di indirizzare aiuti e misure verso i territori che ne hanno maggiore necessità.",
+      "Stato italiano": "La legge riconosce che la montagna richiede strumenti speciali, non semplicemente le stesse politiche pensate per pianura e città.",
+      "Regioni ed enti locali": "La vicinanza ai territori aiuta a scegliere interventi più realistici, purché le diverse amministrazioni collaborino tra loro.",
+      "Responsabilità condivisa": "Nessun livello istituzionale può risolvere da solo il problema: finanziamenti, norme e progetti devono avere obiettivi coerenti.",
+      "Indennità compensative": "Non sono un premio, ma una compensazione per permettere agli agricoltori di continuare a svolgere un'attività utile in condizioni difficili.",
+      "Paesaggio": "Scelte su pascoli, colture, siepi, terrazzamenti e uso dell'acqua cambiano direttamente l'aspetto e la stabilità dei territori rurali.",
+      "Convergenza": "L'idea è che l'Unione Europea sia più equilibrata se le zone più fragili possono avvicinarsi alle condizioni delle zone più sviluppate.",
+      "Competitività e occupazione": "Nelle aree montane significa creare condizioni perché imprese e lavoratori possano innovare senza dover trasferirsi altrove.",
+      "Cooperazione territoriale": "È utile, ad esempio, quando più regioni alpine o appenniniche condividono problemi di mobilità, ambiente o prevenzione dei rischi.",
+      "FESR": "Può quindi sostenere interventi materiali, come infrastrutture e servizi, ma anche progetti locali che rendano un territorio più innovativo e sicuro.",
+      "FSE": "Per le zone montane è importante perché formazione e inclusione possono creare nuove competenze e nuove possibilità di lavoro senza abbandonare il territorio.",
+      "Gestione indiretta": "Per questo molti finanziamenti sembrano regionali: i fondi sono europei, ma i bandi e la gestione concreta passano dalle Regioni.",
+      "Natura e biodiversità": "Gli interventi possono riguardare, per esempio, la protezione di un habitat raro o il recupero di condizioni favorevoli a specie minacciate.",
+      "Politica ambientale e governance": "L'obiettivo non è soltanto risolvere un problema locale, ma sperimentare pratiche che possano essere replicate in altri contesti.",
+      "Informazione e comunicazione": "Le campagne di sensibilizzazione servono a coinvolgere cittadini e amministrazioni, perché la prevenzione ambientale dipende anche dai comportamenti quotidiani.",
+      "Gestione diretta": "Il Ministero dell'Ambiente svolge una prima selezione, ma la decisione finale e il controllo restano alla Commissione europea.",
+      "Approccio integrato": "Per esempio, un buon collegamento stradale può migliorare turismo e servizi, ma deve essere progettato senza aumentare consumo di suolo o rischio idrogeologico.",
+      "Montagna come opportunità": "La strategia cerca quindi di trasformare i vincoli ambientali in qualità distintive, invece di copiare modelli produttivi pensati per altri luoghi.",
+      "Sistema montagna": "Una valle turistica, un'area di pascolo e un borgo isolato possono avere priorità molto diverse: servizi, tutela ambientale o lavoro.",
+      "Piemonte": "La banca dati serve a conoscere meglio i territori prima di decidere: dati affidabili aiutano a individuare problemi e opportunità concrete.",
+      "Lombardia": "Le sue linee di intervento includono anche difesa del suolo, energie rinnovabili, qualità delle foreste e destagionalizzazione del turismo.",
+      "Veneto": "Le IPA sono tavoli di concertazione: chi amministra, chi lavora e chi vive nell'area può contribuire a definire le priorità territoriali.",
+      "Provincia di Trento": "Il fondo dà continuità agli interventi, così le politiche per la montagna non dipendono solo da iniziative episodiche o emergenziali.",
+      "Emilia-Romagna": "La programmazione negoziata significa che Regione, Province ed enti locali discutono insieme quali misure servono davvero in ciascun territorio.",
+      "Toscana": "L'obiettivo è tenere insieme benessere delle persone e tutela delle montagne, sostenendo anche la capacità delle comunità di proporre progetti.",
+      "Calabria": "Qui la tutela del patrimonio forestale è collegata sia alla protezione dell'ambiente sia alle condizioni economiche e sociali delle popolazioni locali."
+    };
+    */
+
+    const branches = [
+      {
+        id: "definizione",
+        title: "Che cos'è l'alpicoltura",
+        tone: "blue",
+        children: [
+          { title: "Definizione", note: "L'alpicoltura è il ramo dell'agricoltura montana che studia gli aspetti economici, agronomici e zootecnici delle aziende pastorali. Il suo scopo è individuare tecniche che rendano più efficiente la produzione senza separarla dal territorio montano." },
+          { title: "Ambiti di studio", note: "Riguarda sia il pascolo di bovini, ovini, caprini ed equini sia la coltivazione delle foraggere d'alta quota. Analizza quindi insieme animali, alimentazione, prati, pascoli e organizzazione dell'azienda." },
+          { title: "Importanza", note: "Circa metà della superficie foraggera italiana si trova in montagna. Per questo l'alpicoltura non è una attività marginale: contribuisce in modo rilevante all'alimentazione animale e alla cura delle aree interne." },
+          {
+            id: "tipi-alpicoltura",
+            title: "Tipi di alpicoltura",
+            children: [
+              { title: "Alpina e prealpina", note: "È legata soprattutto all'allevamento bovino e allo studio di pascoli naturali e prati-pascoli estivi delle Alpi. Qui l'altitudine e la stagionalità condizionano fortemente la disponibilità di foraggio." },
+              { title: "Appenninica", note: "Interessa soprattutto l'allevamento ovino e caprino. La mobilità del bestiame risponde alle differenze climatiche tra montagne interne e pianure più miti." }
+            ]
+          }
+        ]
+      },
+      {
+        id: "transumanza",
+        title: "Transumanza",
+        tone: "violet",
+        children: [
+          { title: "Significato", note: "La transumanza è lo spostamento periodico del bestiame fra pascoli complementari, usati in stagioni diverse. Permette di trovare erba e condizioni climatiche favorevoli durante tutto l'anno." },
+          { title: "Funzione economica", note: "Collega le aziende estive di montagna con quelle di fondovalle o pianura, dove gli animali trascorrono il resto dell'anno. Così si distribuiscono lavoro, foraggi e costi fra territori diversi." },
+          {
+            id: "forme-transumanza",
+            title: "Forme principali",
+            children: [
+              { title: "Orizzontale o mediterranea", note: "È tipica delle aree appenniniche: d'inverno le greggi si spostano verso pianure più miti, mentre d'estate tornano verso i pascoli montani. Risponde all'alternanza tra neve in quota e siccità in pianura." },
+              { title: "Verticale o alpina", note: "Si svolge tra fondovalle e alpeggi, in genere fra 1.000 e 2.700 metri. In inverno-primavera gli animali stanno in stalla o pascolano in basso; a fine giugno salgono in quota per due o tre mesi." }
+            ]
+          }
+        ]
+      },
+      {
+        id: "alpeggio",
+        title: "Alpeggio e malghe",
+        tone: "green",
+        children: [
+          { title: "Alpeggio", note: "È il soggiorno estivo del bestiame in montagna. Sfrutta l'erba dei pascoli d'alta quota nel periodo in cui la vegetazione è più produttiva e libera le strutture di fondovalle." },
+          { title: "Monticazione", note: "È la salita del bestiame verso l'alpeggio, normalmente tra fine maggio e metà giugno. Segna l'inizio della stagione pastorale in quota." },
+          { title: "Demonticazione", note: "È la discesa del bestiame in pianura o fondovalle, di solito a fine settembre. Avviene quando il freddo e la riduzione dell'erba non consentono più il pascolo in quota." },
+          { title: "Malga", note: "La malga è il ricovero stagionale ad alta quota per uomini e animali; può essere isolata o organizzata come piccolo villaggio. È il centro operativo in cui si svolgono le attività pastorali estive." },
+          { title: "Attività della malga", note: "In malga si pascola, si munge, si lavora il latte e si stagionano i formaggi. La vicinanza tra produzione e trasformazione permette di valorizzare il latte nel luogo in cui nasce." },
+          { title: "Autosufficienza", note: "Un alpeggio deve risolvere problemi di acqua ed energia: può avere fontane o laghetti per abbeverare gli animali e zone boscate per ottenere legna da usare nella lavorazione del latte." },
+          { title: "Valore delle malghe", note: "Le malghe custodiscono conoscenze pratiche, tradizioni e valori della società rurale alpina. Per questo hanno una sostenibilità tripla: sociale, economica e ambientale." }
+        ]
+      },
+      {
+        id: "foraggere",
+        title: "Foraggere, prati e pascoli",
+        tone: "amber",
+        children: [
+          { title: "Piante foraggere", note: "Sono piante coltivate o utilizzate per alimentare il bestiame. La loro caratteristica principale è la vivacità, cioè la capacità di ricacciare dopo taglio o pascolamento grazie alle sostanze di riserva." },
+          { title: "Corona e cespo", note: "Nelle leguminose la corona e nelle graminacee il cespo sono strutture basali che accumulano riserve. Dopo l'asportazione della parte aerea permettono la formazione di nuovi steli e culmi." },
+          {
+            id: "durata-foraggere",
+            title: "Durata delle colture",
+            children: [
+              { title: "Temporanee o avvicendate", note: "Entrano nella rotazione aziendale e durano da meno di un anno, come gli erbai, a tre-cinque anni, come molti prati. Sono un'alternativa alle colture non foraggere." },
+              { title: "Permanenti", note: "Restano sul terreno per molti decenni e comprendono prati, prati-pascoli e pascoli. Offrono continuità al paesaggio e alle risorse alimentari dell'allevamento." }
+            ]
+          },
+          {
+            id: "erbai-prati",
+            title: "Erbai e prati",
+            children: [
+              { title: "Erbai", note: "Sono colture rapide e produttive, in specie singola o in miscuglio, destinate a foraggio verde, fieno o insilato. Spesso sono intercalari: occupano il terreno libero fra due colture principali senza impegnare l'intero anno agrario." },
+              { title: "Tipi di erbai", note: "Possono essere autunno-vernini, estivi, primaverili o primaverili-estivi. La scelta dipende dal momento in cui il terreno è disponibile e dal periodo in cui serve il foraggio." },
+              { title: "Prati", note: "Possono essere avvicendati o permanenti e sono formati da una o più specie, spesso leguminose e graminacee insieme. La composizione influenza quantità, qualità e durata del foraggio." },
+              { title: "Monofiti, oligofiti, polifiti", note: "Un prato monofita contiene una sola specie, l'oligofita due o tre specie, il polifita numerose specie. Maggiore diversità può rendere il prato più adattabile alle variazioni ambientali." },
+              { title: "Prati asciutti e irrigui", note: "I prati asciutti dipendono dalle piogge e producono meno tagli; quelli irrigui hanno più acqua disponibile e possono dare maggiori produzioni. Le marcite usano anche irrigazione invernale con funzione termoregolatrice." }
+            ]
+          },
+          { title: "Prati-pascoli", note: "Sono foraggere stabili: il primo ricaccio primaverile viene sfalciato e conservato come scorta, mentre i ricacci successivi sono utilizzati al pascolo. Uniscono quindi fienagione e alimentazione diretta degli animali." },
+          {
+            id: "pascoli-origine",
+            title: "Pascoli secondo l'origine",
+            children: [
+              { title: "Naturali", note: "Si trovano sopra il limite della vegetazione arborea e sono composti da specie erbacee, con arbusti via via meno presenti salendo di quota. Sono una risorsa tipica degli ambienti alpini più elevati." },
+              { title: "Spontanei", note: "Si formano sotto il limite degli alberi dopo disboscamento, inerbimento spontaneo con specie locali e uso continuato. Sono il risultato dell'interazione nel tempo fra attività umana e vegetazione." },
+              { title: "Artificiali", note: "Sono creati dall'agricoltore distribuendo sementi selezionate, raccolte localmente o recuperate come fiorame. Consentono di ricostituire una copertura erbacea adatta all'allevamento." }
+            ]
+          }
+        ]
+      },
+      {
+        id: "gestione",
+        title: "Gestione di prati e pascoli",
+        tone: "teal",
+        children: [
+          { title: "Taglio del prato", note: "Nel prato il fattore stabilizzante è il taglio: viene asportata insieme la fitomassa aerea sopra una certa altezza. Dopo lo sfalcio la pianta è più vulnerabile a stress idrici e variazioni della crescita." },
+          { title: "Pascolamento", note: "Nel pascolo agiscono insieme l'asportazione dell'erba da parte degli animali, il calpestio e la fertilizzazione organica. Questa azione complessa lascia piante di altezza diversa e mantiene più costante l'attività assimilatoria." },
+          { title: "Limite invernale", note: "Il pascolamento è efficiente, ma in montagna non basta d'inverno perché la vegetazione è ferma. Perciò servono spostamenti verso zone più miti o scorte prodotte con lo sfalcio." },
+          { title: "Scorte foraggere", note: "Nella transumanza verticale sono indispensabili superfici da sfalcio per produrre fieno da usare nei mesi freddi. Nella transumanza orizzontale, invece, le greggi trovano risorse in pianura." },
+          { title: "Numero di tagli", note: "Nei prati asciutti si effettuano in genere due-tre tagli l'anno, in quelli irrigui quattro-cinque. Il primo avviene nella prima metà di maggio; i successivi dipendono dalla disponibilità d'acqua." },
+          { title: "Qualità del foraggio", note: "Primo e ultimo sfalcio sono più ricchi di graminacee e quindi di zuccheri e amidi, con maggiore valore energetico. Nei mesi estivi aumentano le leguminose, che rendono il foraggio più proteico." }
+        ]
+      },
+      {
+        id: "valorizzazione",
+        title: "Valorizzazione del pascolo",
+        tone: "red",
+        children: [
+          { title: "Competitività", note: "Il pascolo è particolarmente utile dove pendenza, forme del terreno o condizioni del suolo rendono difficile la meccanizzazione e riducono la convenienza dello sfalcio." },
+          { title: "Riduzione dei costi", note: "L'allevamento prevalentemente pascolivo può diminuire spese di produzione e manodopera, perché una parte dell'alimentazione è raccolta direttamente dagli animali." },
+          { title: "Recupero di aree marginali", note: "Praterie abbandonate o poco convenienti da sfalciare possono tornare a essere utilizzate con l'allevamento estensivo. In molti casi non esistono alternative agricole economicamente valide." },
+          { title: "Prodotti di qualità", note: "Il pascolo può essere collegato a filiere di pregio, come razze autoctone vacca-vitello e formaggi a denominazione di origine. Il legame con il territorio diventa così un elemento di valore commerciale." },
+          { title: "Allevamento biologico", note: "Le norme europee sulla produzione biologica animale prevedono il ricorso al pascolamento. Non è quindi solo una scelta tradizionale, ma anche un requisito per qualificare alcune produzioni." },
+          { title: "Prevenzione dei rischi", note: "Usare e curare grandi superfici a pascolo limita l'abbandono e aiuta a prevenire erosione, frane e alluvioni. Il beneficio riguarda sia l'azienda sia la sicurezza del territorio." },
+          { title: "Agricoltura e turismo rurale", note: "Prodotti, paesaggi, malghe e tradizioni possono sostenersi a vicenda: il turismo valorizza le risorse locali e l'agricoltura mantiene autentico il territorio visitato." }
+        ]
+      },
+      {
+        id: "tratturi",
+        title: "Tratturi appenninici",
+        tone: "violet",
+        children: [
+          { title: "Vie erbose", note: "I tratturi sono antichi percorsi usati per la transumanza delle greggi. Formavano una rete che collegava le pianure pugliesi con i pascoli abruzzesi e rappresentano una testimonianza storica dell'economia pastorale." },
+          { title: "Spostamenti stagionali", note: "I pastori li percorrevano due volte l'anno: in settembre verso le pianure più miti e in maggio verso la montagna. Il percorso seguiva il bisogno di trovare pascoli disponibili nelle diverse stagioni." },
+          { title: "Valore attuale", note: "Oggi i tratturi possono essere valorizzati per turismo, riqualificazione e sviluppo dei territori interni. Non sono solo strade del passato, ma possibili risorse culturali e paesaggistiche." }
+        ]
+      }
+    ];
+
+    const elaborations = {};
+
+    const map = document.getElementById("map");
+    const status = document.getElementById("status");
+    const storageKey = "mappa-alpicoltura";
+
+    function childId(parentId, index, item) {
+      const slug = item.id || item.title.toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-|-$/g, "");
+      return `${parentId}-${index}-${slug}`;
+    }
+
+    function makeLeaf(item) {
+      const leaf = document.createElement("div");
+      leaf.className = "leaf";
+
+      const title = document.createElement("strong");
+      title.textContent = item.title;
+      leaf.appendChild(title);
+
+      if (item.note) {
+        const note = document.createElement("span");
+        note.textContent = `${item.note}${elaborations[item.title] ? ` ${elaborations[item.title]}` : ""}`;
+        leaf.appendChild(note);
+      }
+
+      return leaf;
+    }
+
+    function makeTreeNode(item, id) {
+      const wrapper = document.createElement("div");
+      wrapper.className = "tree-node";
+
+      if (!item.children) {
+        wrapper.appendChild(makeLeaf(item));
+        return wrapper;
+      }
+
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "concept-toggle";
+      button.dataset.nodeId = id;
+      button.setAttribute("aria-expanded", "false");
+
+      const label = document.createElement("span");
+      label.textContent = item.title;
+      const symbol = document.createElement("span");
+      symbol.className = "symbol";
+      symbol.setAttribute("aria-hidden", "true");
+      symbol.textContent = "+";
+      button.append(label, symbol);
+
+      const children = document.createElement("div");
+      children.className = "node-children";
+      children.hidden = true;
+      children.id = `${id}-children`;
+      button.setAttribute("aria-controls", children.id);
+
+      item.children.forEach((child, index) => {
+        children.appendChild(makeTreeNode(child, childId(id, index, child)));
+      });
+
+      button.addEventListener("click", () => toggle(button, children));
+      wrapper.append(button, children);
+      return wrapper;
+    }
+
+    function makeBranch(branch, index) {
+      const section = document.createElement("section");
+      section.className = "branch";
+      section.dataset.tone = branch.tone;
+
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "branch-toggle";
+      button.dataset.nodeId = branch.id;
+      button.setAttribute("aria-expanded", "false");
+
+      const number = document.createElement("span");
+      number.className = "number";
+      number.textContent = index + 1;
+      const title = document.createElement("span");
+      title.className = "branch-title";
+      title.textContent = branch.title;
+      const symbol = document.createElement("span");
+      symbol.className = "symbol";
+      symbol.setAttribute("aria-hidden", "true");
+      symbol.textContent = "+";
+      button.append(number, title, symbol);
+
+      const content = document.createElement("div");
+      content.className = "branch-content";
+      content.hidden = true;
+      content.id = `${branch.id}-content`;
+      button.setAttribute("aria-controls", content.id);
+
+      branch.children.forEach((child, childIndex) => {
+        content.appendChild(makeTreeNode(child, childId(branch.id, childIndex, child)));
+      });
+
+      button.addEventListener("click", () => toggle(button, content));
+      section.append(button, content);
+      return section;
+    }
+
+    function toggle(button, content, persist = true) {
+      const expanded = button.getAttribute("aria-expanded") === "true";
+      button.setAttribute("aria-expanded", String(!expanded));
+      content.hidden = expanded;
+      if (persist) saveState();
+      updateStatus();
+    }
+
+    function setAll(expanded) {
+      document.querySelectorAll("[data-node-id]").forEach(button => {
+        const controlled = document.getElementById(button.getAttribute("aria-controls"));
+        button.setAttribute("aria-expanded", String(expanded));
+        if (controlled) controlled.hidden = !expanded;
+      });
+      saveState();
+      updateStatus();
+    }
+
+    function saveState() {
+      const open = [...document.querySelectorAll('[data-node-id][aria-expanded="true"]')]
+        .map(button => button.dataset.nodeId);
+      try { localStorage.setItem(storageKey, JSON.stringify(open)); }
+      catch { /* La mappa resta utilizzabile anche se il browser blocca lo storage locale. */ }
+    }
+
+    function restoreState() {
+      let open = [];
+      try { open = JSON.parse(localStorage.getItem(storageKey) || "[]"); }
+      catch { open = []; }
+
+      open.forEach(id => {
+        const button = document.querySelector(`[data-node-id="${CSS.escape(id)}"]`);
+        if (!button) return;
+        const controlled = document.getElementById(button.getAttribute("aria-controls"));
+        button.setAttribute("aria-expanded", "true");
+        if (controlled) controlled.hidden = false;
+      });
+    }
+
+    function updateStatus() {
+      const count = document.querySelectorAll('[data-node-id][aria-expanded="true"]').length;
+      status.textContent = count === 0 ? "Mappa chiusa" : `${count} nodi aperti`;
+    }
+
+    branches.forEach((branch, index) => map.appendChild(makeBranch(branch, index)));
+    restoreState();
+    updateStatus();
+
+    document.getElementById("open-all").addEventListener("click", () => setAll(true));
+    document.getElementById("close-all").addEventListener("click", () => setAll(false));
+    document.getElementById("print-map").addEventListener("click", () => window.print());
+  </script>
+</body>
+</html>
