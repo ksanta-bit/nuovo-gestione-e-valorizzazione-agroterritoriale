@@ -157,10 +157,10 @@
 
     .branch-toggle {
       display: grid;
-      grid-template-columns: 34px minmax(0, 1fr) 28px;
+      grid-template-columns: 54px minmax(0, 1fr) 28px;
       align-items: center;
       gap: 10px;
-      min-height: 66px;
+      min-height: 76px;
       padding: 12px 14px;
       background: var(--branch-soft);
     }
@@ -177,13 +177,14 @@
     .number {
       display: grid;
       place-items: center;
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
+      width: 48px;
+      height: 48px;
+      border-radius: 6px;
       background: var(--branch);
       color: #fff;
       font-weight: 800;
       font-variant-numeric: tabular-nums;
+      font-size: 1.1rem;
     }
 
     .branch-title {
@@ -323,6 +324,15 @@
       .toolbar, .status { display: none; }
       .branch { break-inside: avoid; box-shadow: none; }
       .map-grid { gap: 10px; }
+    }
+    @media print {
+      :root { color-scheme: light; }
+      * { box-shadow: none !important; }
+      body, .page, .root-node, .branch, .leaf, .branch-toggle, .concept-toggle { background: #fff !important; color: #111 !important; }
+      .branch, .root-node, .leaf, .branch-toggle, .concept-toggle { border-color: #777 !important; }
+      .number { background: #fff !important; color: #111 !important; border: 1px solid #111; }
+      .branch-content[hidden], .node-children[hidden] { display: block !important; }
+      .toolbar, .site-nav, .status { display: none !important; }
     }
   </style>
 </head>
@@ -765,7 +775,7 @@
 
       const number = document.createElement("span");
       number.className = "number";
-      number.textContent = index + 1;
+      number.textContent = String(index + 1).padStart(2, "0");
       const title = document.createElement("span");
       title.className = "branch-title";
       title.textContent = branch.title;
