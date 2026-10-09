@@ -8,6 +8,8 @@ Lo scopo e offrire a studenti un sito consultabile gratuitamente da telefono, ta
 
 ## Vincoli sui contenuti
 
+- Il proprietario del progetto dichiara di essere autorizzato a creare e usare localmente scansioni o fotografie del manuale come materiale sorgente per lo studio e per la preparazione delle mappe.
+- Questa autorizzazione riguarda la consultazione e la produzione dei materiali di studio; non equivale automaticamente al permesso di ridistribuire pubblicamente le scansioni.
 - Pubblicare soltanto sintesi, spiegazioni, schemi e grafici originali.
 - Non includere scansioni, fotografie delle pagine, PDF del libro o trascrizioni estese del manuale.
 - Usare il titolo del manuale solo per identificare la raccolta.
