@@ -19,6 +19,8 @@ Regole da mantenere per i capitoli futuri.
 - L'area di lavoro utilizza quasi tutta la larghezza disponibile, lasciando margini proporzionati.
 - La scala del testo e distinta per desktop, tablet e telefono; il testo non deve mai richiedere zoom per essere letto e deve restare visibilmente piu ampio sui desktop.
 - Colori sobri e coerenti con agricoltura, territorio e ambiente; il colore aiuta a separare i rami ma non e l'unico segnale informativo.
+- Ogni nuova pagina deve caricare `lettura_testo.js`: dopo la selezione di una frase offre i comandi `Ascolta selezione` e `Ferma`, usando una voce italiana locale del dispositivo.
+- La lettura vocale resta facoltativa, non invia il testo a servizi esterni e non deve comparire nella stampa.
 
 ## Stampa
 
