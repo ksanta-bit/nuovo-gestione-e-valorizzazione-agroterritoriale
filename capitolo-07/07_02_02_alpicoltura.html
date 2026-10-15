@@ -362,209 +362,6 @@
   </main>
 
   <script>
-    /* Mappa precedente conservata nella copia sorgente.
-    const branches = [
-      {
-        id: "criticita",
-        title: "Criticità delle aree montane",
-        tone: "red",
-        children: [
-          {
-            id: "marginalita",
-            title: "Marginalità",
-            children: [
-              { title: "Economico-produttiva", note: "Le aziende affrontano costi più alti per trasporti, macchinari e servizi; inoltre i mercati sono spesso piccoli e lontani." },
-              { title: "Isolamento commerciale", note: "Strade difficili, distanza dai centri abitati e collegamenti deboli rendono più oneroso vendere prodotti, acquistare materiali e raggiungere i servizi." },
-              { title: "Sociale e culturale", note: "Quando scuole, sanità, attività culturali e occasioni di incontro diminuiscono, le comunità rischiano di spopolarsi e di perdere competenze locali." }
-            ]
-          },
-          {
-            id: "abbandono",
-            title: "Abbandono della montagna",
-            children: [
-              { title: "Esodo dei giovani", note: "La ricerca di studio, lavoro e servizi in pianura riduce la popolazione residente e aumenta l'età media di chi resta." },
-              { title: "Riduzione delle attività agroforestali", note: "Se si abbandonano campi, pascoli e boschi, manca la manutenzione ordinaria che limita degrado, incendi e instabilità del suolo." },
-              { title: "Modelli poco sostenibili", note: "Interventi pensati senza rispettare i limiti del territorio possono consumare suolo, danneggiare paesaggio e risorse naturali." },
-              { title: "Politiche poco efficaci", note: "Aiuti troppo generici o frammentati non risolvono i problemi se non tengono conto delle caratteristiche di ogni zona montana." }
-            ]
-          },
-          { title: "Conseguenza territoriale", note: "L'abbandono riduce la cura di versanti, fossi, prati e boschi: aumentano quindi erosione, frane, alluvioni e perdita del paesaggio rurale." }
-        ]
-      },
-      {
-        id: "multifunzionalita",
-        title: "Multifunzionalità della montagna",
-        tone: "green",
-        children: [
-          { title: "Biodiversità", note: "La varietà di quote, esposizioni e ambienti crea molti habitat; conservarli significa proteggere specie vegetali e animali diverse." },
-          { title: "Tutela ambientale", note: "Boschi, prati e pascoli stabilizzano i versanti, trattengono il suolo e regolano il deflusso dell'acqua, riducendo il rischio idrogeologico." },
-          { title: "Prodotti tipici", note: "Formaggi di malga, carni, miele e altri prodotti legati al luogo rafforzano l'identità locale e possono creare valore economico." },
-          { title: "Riserve idriche", note: "Le montagne raccolgono e rilasciano acqua verso valle; la loro gestione influenza disponibilità idrica, irrigazione e qualità delle acque." },
-          { title: "Risorse forestali", note: "I boschi forniscono legname e biomassa, ma offrono anche protezione del suolo, assorbimento di carbonio e spazi ricreativi." },
-          { title: "Tradizioni e cultura", note: "Tecniche agricole, feste, architetture rurali e saperi locali sono un patrimonio che rende riconoscibili le comunità montane." }
-        ]
-      },
-      {
-        id: "sviluppo",
-        title: "Sviluppo sostenibile",
-        tone: "blue",
-        children: [
-          {
-            id: "obiettivi",
-            title: "Obiettivi principali",
-            children: [
-              { title: "Qualità della vita", note: "Servono servizi essenziali, lavoro, collegamenti e occasioni per i giovani: solo così vivere in montagna resta una scelta possibile." },
-              { title: "Funzione ecologica", note: "Lo sviluppo deve rispettare la capacità degli ecosistemi di rigenerarsi, evitando attività che danneggiano acqua, suolo, boschi e biodiversità." }
-            ]
-          },
-          {
-            id: "attivita",
-            title: "Attività fondamentali",
-            children: [
-              { title: "Agricoltura", note: "Coltivazioni adatte a clima e pendenza producono reddito e mantengono aperto il paesaggio, senza forzare l'ambiente." },
-              { title: "Allevamento estensivo", note: "Gli animali utilizzano prati e pascoli: se il carico è equilibrato, limitano l'avanzata del bosco e valorizzano le foraggere locali." },
-              { title: "Attività forestale", note: "Tagli e cure pianificati mantengono il bosco stabile e produttivo, fornendo legno senza compromettere la funzione protettiva." }
-            ]
-          },
-          { title: "Doppio risultato", note: "Le attività montane devono dare reddito a chi vive sul posto e, nello stesso tempo, offrire un beneficio collettivo: paesaggio curato, meno rischi e risorse conservate." }
-        ]
-      },
-      {
-        id: "legislazione",
-        title: "Legislazione e istituzioni",
-        tone: "amber",
-        children: [
-          { title: "Costituzione, articolo 44", note: "La salvaguardia e la valorizzazione delle zone montane sono considerate di interesse nazionale: non riguardano solo chi vive in montagna." },
-          { title: "Unione Europea", note: "La direttiva 75/268/CEE individua le aree montane e svantaggiate, riconoscendo che l'agricoltura qui opera con maggiori difficoltà." },
-          { title: "Stato italiano", note: "La Legge n. 97/1994 organizza interventi specifici per la montagna e riconosce il ruolo delle comunità che vi risiedono." },
-          { title: "Regioni ed enti locali", note: "Le decisioni diventano concrete tramite leggi, piani e progetti regionali e locali, adattati alle esigenze di ogni territorio." },
-          { title: "Responsabilità condivisa", note: "Per funzionare, le politiche devono coordinare Unione Europea, Stato, Regioni, Province autonome, Comuni e soggetti del territorio." }
-        ]
-      },
-      {
-        id: "ue",
-        title: "Politiche e fondi europei",
-        tone: "violet",
-        children: [
-          {
-            id: "pac",
-            title: "PAC",
-            children: [
-              { title: "Indennità compensative", note: "Sono aiuti agli agricoltori che lavorano in aree difficili: compensano in parte maggiori costi e minori rese rispetto alle zone più favorevoli." },
-              { title: "Paesaggio", note: "La PAC condiziona quali colture e tecniche convengono agli agricoltori; può quindi favorire una gestione più attenta di suolo, acqua e paesaggio." }
-            ]
-          },
-          {
-            id: "coesione",
-            title: "Politica di coesione",
-            children: [
-              { title: "Convergenza", note: "Finanzia la crescita delle regioni meno sviluppate per ridurre le differenze economiche e sociali tra territori europei." },
-              { title: "Competitività e occupazione", note: "Sostiene innovazione, imprese, competenze e posti di lavoro, rendendo le economie locali più capaci di affrontare i cambiamenti." },
-              { title: "Cooperazione territoriale", note: "Favorisce progetti comuni tra territori, anche oltre i confini nazionali, quando i problemi e le risorse sono condivisi." }
-            ]
-          },
-          {
-            id: "fondi",
-            title: "Fondi strutturali",
-            children: [
-              { title: "FESR", note: "Finanzia infrastrutture e sviluppo locale, ma anche ricerca, innovazione, tutela dell'ambiente e prevenzione dei rischi naturali." },
-              { title: "FSE", note: "Finanzia formazione e inclusione: aiuta lavoratori e imprese ad adattarsi, facilita l'accesso al lavoro e sostiene le persone più svantaggiate." },
-              { title: "Gestione indiretta", note: "La Commissione fissa regole comuni; gli Stati le traducono nei QSN e le Regioni nei POR, poi selezionano e controllano i progetti finanziati." }
-            ]
-          },
-          {
-            id: "life",
-            title: "Politica ambientale e LIFE+",
-            children: [
-              { title: "Natura e biodiversità", note: "Sostiene interventi per conservare habitat e specie e per definire misure concrete che evitino la perdita di biodiversità." },
-              { title: "Politica ambientale e governance", note: "Finanzia innovazioni di processo su aria, acqua, suolo, risorse naturali e cambiamento climatico, utili anche come modello per altri territori." },
-              { title: "Informazione e comunicazione", note: "Promuove la conoscenza delle norme ambientali e comportamenti preventivi, per esempio iniziative di sensibilizzazione contro gli incendi." },
-              { title: "Gestione diretta", note: "A differenza dei fondi strutturali, LIFE+ è gestito dalla Commissione europea, che seleziona e controlla direttamente i progetti." }
-            ]
-          }
-        ]
-      },
-      {
-        id: "regioni",
-        title: "Governance regionale",
-        tone: "teal",
-        children: [
-          {
-            id: "principi-regioni",
-            title: "Principi comuni",
-            children: [
-              { title: "Approccio integrato", note: "Un problema montano raramente dipende da un solo settore: politiche su ambiente, agricoltura, trasporti, sanità, imprese e turismo devono lavorare insieme." },
-              { title: "Montagna come opportunità", note: "Le caratteristiche locali, come paesaggio, prodotti, foreste, acqua e cultura, diventano risorse su cui costruire sviluppo e occupazione." },
-              { title: "Sistema montagna", note: "Non esiste una sola montagna: ogni area ha quote, economie, popolazione e difficoltà diverse, quindi richiede soluzioni mirate." }
-            ]
-          },
-          {
-            id: "esempi-regioni",
-            title: "Esempi regionali",
-            children: [
-              { title: "Piemonte", note: "Ha adottato un Testo Unico sulla montagna e una banca dati per analizzare territori montani e collinari, poi aggiornata con norme di tutela e sviluppo." },
-              { title: "Lombardia", note: "Il Piano d'Azione per la Montagna collega qualità della vita, sviluppo economico, innovazione e accessibilità a interventi su ambiente, turismo e imprese." },
-              { title: "Veneto", note: "Con il Progetto montagna e le Intese Programmatiche d'Area mette insieme enti locali, soggetti economici e sociali per decidere priorità di sviluppo." },
-              { title: "Provincia di Trento", note: "Ha creato un fondo provinciale per sostenere nel tempo le politiche montane, con attenzione a risorse ambientali, sviluppo sociale e identità culturale." },
-              { title: "Emilia-Romagna", note: "Il Programma Regionale per la Montagna usa intese provinciali e accordi-quadro per scegliere interventi coerenti con i bisogni di ogni area." },
-              { title: "Toscana", note: "La Carta delle montagne toscane punta su servizi, sostenibilità, risorse locali, protezione degli ecosistemi e capacità progettuale delle comunità montane." },
-              { title: "Calabria", note: "La normativa sul patrimonio forestale riorganizza competenze e mira a tutela del territorio, attività produttive, sicurezza e migliori condizioni di vita." }
-            ]
-          }
-        ]
-      }
-    ];
-
-    const elaborations = {
-      "Economico-produttiva": "In pratica, produrre e vendere la stessa merce costa di più rispetto alla pianura, perciò molte imprese faticano a restare competitive.",
-      "Isolamento commerciale": "Il problema non riguarda solo le merci: rende più difficile anche raggiungere scuole, ospedali, uffici e occasioni di lavoro.",
-      "Sociale e culturale": "Se le persone si allontanano, si indeboliscono anche reti di aiuto, associazioni e saperi tramandati tra generazioni.",
-      "Esodo dei giovani": "Questo crea un circolo negativo: meno giovani significa meno famiglie, meno servizi e minori motivi per restare o tornare.",
-      "Riduzione delle attività agroforestali": "La cura agricola e forestale non è soltanto produzione: è anche manutenzione preventiva del paesaggio e del territorio.",
-      "Modelli poco sostenibili": "Per esempio, un turismo non regolato o costruzioni fuori scala possono danneggiare proprio le risorse che rendono attrattiva la montagna.",
-      "Politiche poco efficaci": "Occorrono quindi interventi continuativi e coordinati, non aiuti occasionali scollegati dai bisogni reali del luogo.",
-      "Conseguenza territoriale": "La tutela della montagna interessa anche le aree di valle, perché molti effetti del dissesto si propagano lungo i corsi d'acqua.",
-      "Biodiversità": "Una maggiore biodiversità rende gli ecosistemi più equilibrati e più capaci di reagire a parassiti, eventi estremi e cambiamenti climatici.",
-      "Tutela ambientale": "Per questo pratiche agricole e forestali corrette non sono un ostacolo allo sviluppo, ma una condizione per renderlo duraturo.",
-      "Prodotti tipici": "Quando qualità e origine sono riconoscibili, il prodotto può essere venduto meglio e sostenere agricoltori, allevatori e trasformatori locali.",
-      "Riserve idriche": "Proteggere sorgenti, boschi e suoli montani è quindi importante anche per chi usa l'acqua a valle, nelle città e nelle campagne.",
-      "Risorse forestali": "La gestione deve essere pianificata: prelevare legno senza curare il bosco riduce nel tempo sia il valore economico sia la protezione ambientale.",
-      "Tradizioni e cultura": "Valorizzarle può favorire turismo responsabile, artigianato e prodotti locali, senza trasformare la cultura in qualcosa di artificiale.",
-      "Qualità della vita": "L'obiettivo è evitare che la montagna diventi un luogo da visitare soltanto, ma resti un territorio in cui si può abitare stabilmente.",
-      "Funzione ecologica": "Ogni progetto dovrebbe quindi valutare non solo il guadagno immediato, ma anche le conseguenze sull'ambiente nel medio e lungo periodo.",
-      "Agricoltura": "In montagna l'agricoltura è spesso meno intensiva, ma può puntare su qualità, filiere corte e produzioni caratterizzate dal territorio.",
-      "Allevamento estensivo": "Pascoli utilizzati con equilibrio evitano l'abbandono, limitano l'accumulo di vegetazione secca e sostengono molte specie vegetali e animali.",
-      "Attività forestale": "Una selvicoltura ben condotta sceglie tempi e modalità di taglio che consentono al bosco di rinnovarsi e di continuare a proteggere il versante.",
-      "Doppio risultato": "È il significato della multifunzionalità: chi lavora in montagna produce beni economici e, insieme, servizi utili a tutta la collettività.",
-      "Costituzione, articolo 44": "Questo principio giustifica interventi specifici, perché l'uguaglianza non significa trattare allo stesso modo territori con difficoltà molto diverse.",
-      "Unione Europea": "La classificazione delle aree svantaggiate permette di indirizzare aiuti e misure verso i territori che ne hanno maggiore necessità.",
-      "Stato italiano": "La legge riconosce che la montagna richiede strumenti speciali, non semplicemente le stesse politiche pensate per pianura e città.",
-      "Regioni ed enti locali": "La vicinanza ai territori aiuta a scegliere interventi più realistici, purché le diverse amministrazioni collaborino tra loro.",
-      "Responsabilità condivisa": "Nessun livello istituzionale può risolvere da solo il problema: finanziamenti, norme e progetti devono avere obiettivi coerenti.",
-      "Indennità compensative": "Non sono un premio, ma una compensazione per permettere agli agricoltori di continuare a svolgere un'attività utile in condizioni difficili.",
-      "Paesaggio": "Scelte su pascoli, colture, siepi, terrazzamenti e uso dell'acqua cambiano direttamente l'aspetto e la stabilità dei territori rurali.",
-      "Convergenza": "L'idea è che l'Unione Europea sia più equilibrata se le zone più fragili possono avvicinarsi alle condizioni delle zone più sviluppate.",
-      "Competitività e occupazione": "Nelle aree montane significa creare condizioni perché imprese e lavoratori possano innovare senza dover trasferirsi altrove.",
-      "Cooperazione territoriale": "È utile, ad esempio, quando più regioni alpine o appenniniche condividono problemi di mobilità, ambiente o prevenzione dei rischi.",
-      "FESR": "Può quindi sostenere interventi materiali, come infrastrutture e servizi, ma anche progetti locali che rendano un territorio più innovativo e sicuro.",
-      "FSE": "Per le zone montane è importante perché formazione e inclusione possono creare nuove competenze e nuove possibilità di lavoro senza abbandonare il territorio.",
-      "Gestione indiretta": "Per questo molti finanziamenti sembrano regionali: i fondi sono europei, ma i bandi e la gestione concreta passano dalle Regioni.",
-      "Natura e biodiversità": "Gli interventi possono riguardare, per esempio, la protezione di un habitat raro o il recupero di condizioni favorevoli a specie minacciate.",
-      "Politica ambientale e governance": "L'obiettivo non è soltanto risolvere un problema locale, ma sperimentare pratiche che possano essere replicate in altri contesti.",
-      "Informazione e comunicazione": "Le campagne di sensibilizzazione servono a coinvolgere cittadini e amministrazioni, perché la prevenzione ambientale dipende anche dai comportamenti quotidiani.",
-      "Gestione diretta": "Il Ministero dell'Ambiente svolge una prima selezione, ma la decisione finale e il controllo restano alla Commissione europea.",
-      "Approccio integrato": "Per esempio, un buon collegamento stradale può migliorare turismo e servizi, ma deve essere progettato senza aumentare consumo di suolo o rischio idrogeologico.",
-      "Montagna come opportunità": "La strategia cerca quindi di trasformare i vincoli ambientali in qualità distintive, invece di copiare modelli produttivi pensati per altri luoghi.",
-      "Sistema montagna": "Una valle turistica, un'area di pascolo e un borgo isolato possono avere priorità molto diverse: servizi, tutela ambientale o lavoro.",
-      "Piemonte": "La banca dati serve a conoscere meglio i territori prima di decidere: dati affidabili aiutano a individuare problemi e opportunità concrete.",
-      "Lombardia": "Le sue linee di intervento includono anche difesa del suolo, energie rinnovabili, qualità delle foreste e destagionalizzazione del turismo.",
-      "Veneto": "Le IPA sono tavoli di concertazione: chi amministra, chi lavora e chi vive nell'area può contribuire a definire le priorità territoriali.",
-      "Provincia di Trento": "Il fondo dà continuità agli interventi, così le politiche per la montagna non dipendono solo da iniziative episodiche o emergenziali.",
-      "Emilia-Romagna": "La programmazione negoziata significa che Regione, Province ed enti locali discutono insieme quali misure servono davvero in ciascun territorio.",
-      "Toscana": "L'obiettivo è tenere insieme benessere delle persone e tutela delle montagne, sostenendo anche la capacità delle comunità di proporre progetti.",
-      "Calabria": "Qui la tutela del patrimonio forestale è collegata sia alla protezione dell'ambiente sia alle condizioni economiche e sociali delle popolazioni locali."
-    };
-    */
 
     const branches = [
       {
@@ -679,6 +476,29 @@
           { title: "Allevamento biologico", note: "Le norme europee sulla produzione biologica animale prevedono il ricorso al pascolamento. Non è quindi solo una scelta tradizionale, ma anche un requisito per qualificare alcune produzioni." },
           { title: "Prevenzione dei rischi", note: "Usare e curare grandi superfici a pascolo limita l'abbandono e aiuta a prevenire erosione, frane e alluvioni. Il beneficio riguarda sia l'azienda sia la sicurezza del territorio." },
           { title: "Agricoltura e turismo rurale", note: "Prodotti, paesaggi, malghe e tradizioni possono sostenersi a vicenda: il turismo valorizza le risorse locali e l'agricoltura mantiene autentico il territorio visitato." }
+        ]
+      },
+      {
+        id: "equilibrio-pascolo",
+        title: "Equilibrio tra animali e pascolo",
+        tone: "blue",
+        children: [
+          { title: "Carico animale", note: "Indica il rapporto tra numero e tipo di animali, superficie disponibile e durata del pascolamento. Un carico adeguato permette di nutrire la mandria senza consumare la vegetazione più rapidamente della sua capacità di ricaccio." },
+          { title: "Sovrapascolamento", note: "Troppi animali o una permanenza eccessiva selezionano le specie più appetibili, lasciano il suolo scoperto e aumentano calpestio ed erosione. Nel tempo il pascolo perde qualità e diventa meno produttivo." },
+          { title: "Sottopascolamento", note: "Con pochi animali l'erba invecchia, aumentano specie poco appetibili, arbusti e accumulo di materiale secco. Il pascolo tende così a chiudersi e può avanzare il bosco." },
+          { title: "Turnazione", note: "Dividere la superficie in settori e alternare utilizzo e riposo aiuta il ricaccio e distribuisce meglio gli animali. Tempi e dimensioni dei turni dipendono dalla crescita dell'erba, dalla quota e dalle condizioni meteorologiche." },
+          { title: "Acqua, sale e punti di sosta", note: "La posizione di abbeveratoi, sale e zone d'ombra influenza dove gli animali si concentrano. Una distribuzione ragionata riduce aree sovrautilizzate e favorisce un prelievo più uniforme del foraggio." }
+        ]
+      },
+      {
+        id: "monitoraggio",
+        title: "Controllo e adattamento della gestione",
+        tone: "green",
+        children: [
+          { title: "Osservare la cotica", note: "Copertura del terreno, altezza residua, presenza di specie buone foraggere o infestanti e zone erose mostrano se l'utilizzo è equilibrato. Il controllo deve essere ripetuto, non fatto soltanto a fine stagione." },
+          { title: "Osservare gli animali", note: "Condizione corporea, produzione di latte, accrescimento e comportamento al pascolo indicano se quantità e qualità dell'erba sono adeguate. Un pascolo apparentemente verde non garantisce sempre una razione sufficiente." },
+          { title: "Registrare le scelte", note: "Date di ingresso e uscita, numero di capi, tagli, concimazioni e andamento climatico permettono di confrontare annate diverse. I dati aiutano a correggere il piano di pascolamento con maggiore precisione." },
+          { title: "Gestione adattativa", note: "La pianificazione non è rigida: siccità, piogge, crescita dell'erba e stato della mandria possono richiedere di accorciare un turno, spostare gli animali o usare scorte. Gestire bene significa decidere in base a ciò che il sistema mostra." }
         ]
       },
       {

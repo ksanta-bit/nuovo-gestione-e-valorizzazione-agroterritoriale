@@ -7,6 +7,11 @@ Regole da mantenere per i capitoli futuri.
 - Una pagina per ogni sottocapitolo, con titolo numerato e collegamenti a indice del libro e indice del capitolo.
 - Le sezioni principali sono ordinate con un riquadro compatto, colorato e a due cifre: `01`, `02`, `03`. Il riquadro e separato dal titolo da uno spazio visibile.
 - Le spiegazioni di dettaglio restano richiudibili e usano frasi complete, brevi e autonome.
+- Ogni mappa deve concettualizzare, non riscrivere il manuale: seleziona relazioni, cause, conseguenze, criteri di scelta e sequenze operative.
+- I rami principali devono coprire tutti i nuclei davvero utili allo studio. Come riferimento, una mappa articolata usa in genere `8-10` rami, senza aggiungere sezioni solo per raggiungere un numero.
+- Ogni punto finale contiene normalmente due o tre frasi brevi: definizione o idea centrale, significato pratico ed eventuale collegamento con altri concetti.
+- Per norme, politiche e fondi distinguere sempre il quadro storico presentato dal libro dall'assetto vigente, indicando il periodo di programmazione.
+- Nelle sezioni istituzionali chiarire la catena: problema pubblico, livello che decide, programma o strumento, soggetti destinatari, attuazione e verifica dei risultati.
 - Le mappe usano una griglia che passa da tre o piu colonne sui desktop a due sui tablet e una sui telefoni.
 
 ## Lettura a schermo

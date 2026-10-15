@@ -301,6 +301,18 @@
       text-align: right;
     }
 
+    .sources {
+      margin-top: 28px;
+      padding-top: 18px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: .86rem;
+      line-height: 1.5;
+    }
+
+    .sources strong { color: var(--text); }
+    .sources a { color: #245f7b; font-weight: 650; }
+
      @media (max-width: 1100px) { .page { font-size: 20px; } .map-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 
      @media (max-width: 760px) { .page { font-size: 18px; }
@@ -359,6 +371,12 @@
 
     <section id="map" class="map-grid" aria-label="Mappa concettuale espandibile"></section>
     <div id="status" class="status" aria-live="polite"></div>
+    <aside class="sources" aria-label="Riferimenti istituzionali per l'aggiornamento">
+      <strong>Aggiornamento del quadro politico:</strong>
+      <a href="https://www.politichecoesione.governo.it/it/politica-di-coesione/la-programmazione-2021-2027/strategie-2021-2027/accordo-di-partenariato-2021-2027/">Accordo di partenariato 2021-2027</a>,
+      <a href="https://agriculture.ec.europa.eu/cap-my-country/cap-strategic-plans_en">Piani strategici della PAC</a> e
+      <a href="https://cinea.ec.europa.eu/programmes/life_en">programma LIFE</a>.
+    </aside>
   </main>
 
   <script>
@@ -404,6 +422,17 @@
         ]
       },
       {
+        id: "perche-politiche",
+        title: "Perché servono politiche per la montagna",
+        tone: "teal",
+        children: [
+          { title: "Svantaggi strutturali", note: "Pendenza, clima, distanze e frammentazione dei terreni fanno aumentare i costi e riducono spesso le rese. Il mercato, da solo, non riconosce queste condizioni e può rendere non conveniente continuare a coltivare o allevare." },
+          { title: "Servizi utili anche alla valle", note: "Chi mantiene pascoli, boschi, terrazzamenti e reticolo idrico produce benefici collettivi: limita dissesto e incendi, conserva acqua, paesaggio e biodiversità. Una politica pubblica può remunerare almeno in parte questi servizi ecosistemici." },
+          { title: "Diritto ai servizi essenziali", note: "Scuola, sanità, trasporti e connessione digitale devono restare accessibili anche dove la popolazione è dispersa. Senza servizi adeguati, gli incentivi economici alle imprese non bastano a fermare lo spopolamento." },
+          { title: "Correggere gli squilibri territoriali", note: "L'obiettivo non è rendere la montagna uguale alla pianura, ma garantire condizioni dignitose di vita e lavoro valorizzandone le caratteristiche specifiche. Per questo gli interventi devono essere territoriali e non soltanto settoriali." }
+        ]
+      },
+      {
         id: "sviluppo",
         title: "Sviluppo sostenibile",
         tone: "blue",
@@ -426,6 +455,18 @@
             ]
           },
           { title: "Doppio risultato", note: "Le attività montane devono dare reddito a chi vive sul posto e, nello stesso tempo, offrire un beneficio collettivo: paesaggio curato, meno rischi e risorse conservate." }
+        ]
+      },
+      {
+        id: "livelli-decisione",
+        title: "Chi decide e come si arriva al territorio",
+        tone: "blue",
+        children: [
+          { title: "Unione Europea", note: "Definisce obiettivi comuni, regole e fondi: coesione, agricoltura, ambiente, lavoro e transizione climatica. Non decide però ogni singolo intervento locale nello stesso modo." },
+          { title: "Stato", note: "Con leggi, strategie nazionali e accordi di programmazione traduce il quadro europeo e coordina le priorità del Paese. Stabilisce inoltre norme generali e ripartisce molte risorse tra programmi." },
+          { title: "Regioni e Province autonome", note: "Predispongono programmi, misure e bandi adattati ai territori; selezionano numerosi progetti e ne controllano l'attuazione. Per studenti e imprese, il finanziamento europeo appare spesso come un bando regionale proprio per questo passaggio." },
+          { title: "Comuni, unioni e partenariati locali", note: "Individuano bisogni concreti, costruiscono progetti e gestiscono servizi o interventi. Imprese, associazioni e cittadini possono partecipare alla progettazione e contribuire al controllo dei risultati." },
+          { title: "La catena operativa", note: "Un obiettivo politico diventa programma, poi misura o bando, progetto finanziato, realizzazione e infine monitoraggio. Se un anello è debole, anche una buona quantità di fondi può produrre risultati modesti." }
         ]
       },
       {
@@ -484,6 +525,18 @@
         ]
       },
       {
+        id: "leggere-fondi",
+        title: "Come leggere fondi e interventi",
+        tone: "amber",
+        children: [
+          { title: "PAC e sviluppo rurale", note: "Sostengono aziende agricole, gestione del territorio e sviluppo delle aree rurali. In montagna possono compensare svantaggi naturali, finanziare investimenti, pratiche agroambientali, giovani agricoltori e cooperazione locale." },
+          { title: "FESR", note: "Interviene soprattutto su infrastrutture, innovazione, imprese, energia, ambiente e accessibilità. Può aiutare una zona montana se l'investimento migliora servizi e competitività senza consumare le risorse territoriali." },
+          { title: "FSE+", note: "Finanzia persone e competenze: formazione, occupazione, inclusione e rafforzamento dei servizi. È complementare agli investimenti materiali, perché una struttura nuova serve poco se mancano lavoratori preparati e comunità in grado di usarla." },
+          { title: "LIFE e programmi ambientali", note: "Sostengono progetti dimostrativi e innovativi su natura, biodiversità, clima ed economia circolare. Sono adatti quando un territorio vuole sperimentare soluzioni trasferibili anche altrove." },
+          { title: "Non basta il nome del fondo", note: "Per capire una misura occorre leggere destinatari, spese ammissibili, percentuale di contributo, cofinanziamento, scadenze, indicatori e obblighi di controllo. Un fondo indica la finalità generale; il bando stabilisce chi può davvero partecipare e come." }
+        ]
+      },
+      {
         id: "regioni",
         title: "Governance regionale",
         tone: "teal",
@@ -510,6 +563,18 @@
               { title: "Calabria", note: "La normativa sul patrimonio forestale riorganizza competenze e mira a tutela del territorio, attività produttive, sicurezza e migliori condizioni di vita." }
             ]
           }
+        ]
+      },
+      {
+        id: "quadro-attuale",
+        title: "Dal quadro del libro a quello attuale",
+        tone: "violet",
+        children: [
+          { title: "Termini storici del manuale", note: "Sigle come QSN, POR, FSE e LIFE+ descrivono cicli di programmazione precedenti. Restano utili per comprendere il meccanismo, ma non sempre corrispondono ai nomi usati nei bandi attuali." },
+          { title: "Programmazione 2021-2027", note: "Oggi la politica di coesione italiana fa riferimento all'Accordo di partenariato e a Programmi nazionali e regionali; il fondo sociale è indicato come FSE+. Cambiano sigle e periodi, mentre resta la logica di obiettivi, programmi, bandi e controlli." },
+          { title: "PAC 2023-2027", note: "Gli interventi agricoli e di sviluppo rurale sono coordinati nel Piano strategico nazionale della PAC, con attuazione anche regionale. Per le aree montane contano in particolare sostegno al reddito, investimenti, ambiente e compensazioni per vincoli naturali." },
+          { title: "Strategie per le aree interne", note: "Le politiche territoriali cercano di collegare servizi essenziali e sviluppo locale: istruzione, salute, mobilità, imprese, ambiente e comunità devono avanzare insieme. È una risposta al fatto che lo spopolamento non dipende da una sola causa." },
+          { title: "Regola di studio", note: "Quando si incontra una sigla, bisogna chiedersi sempre: a quale periodo appartiene, chi gestisce il programma, chi può ricevere il sostegno e quale problema pubblico dovrebbe risolvere." }
         ]
       }
     ];
