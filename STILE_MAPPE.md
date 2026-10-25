@@ -14,6 +14,7 @@ Regole da mantenere per i capitoli futuri.
 - Per norme, politiche e fondi distinguere sempre il quadro storico presentato dal libro dall'assetto vigente, indicando il periodo di programmazione.
 - Nelle sezioni istituzionali chiarire la catena: problema pubblico, livello che decide, programma o strumento, soggetti destinatari, attuazione e verifica dei risultati.
 - Le mappe usano una griglia che passa da tre o piu colonne sui desktop a due sui tablet e una sui telefoni.
+- Ogni pagina riporta una piccola intestazione istituzionale con il marchio senza riquadro colorato, `IIS “8 Marzo – K. Lorenz”, Mirano`, `Dirigente scolastica: dott.ssa Roberta Gasparini` e `Autore: prof. Gianluca Simonetti`. Scuola e marchio restano riconoscibili; dirigente e autore sono in corpo secondario e discreto.
 
 ## Lettura a schermo
 
